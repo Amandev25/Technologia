@@ -1,0 +1,37 @@
+{
+  "scenario": "Coffee Shop Conversation (Casual)",
+  "conversation_duration": "0 minutes 25 seconds",
+  "total_exchanges": 1,
+  "conversation_history": [
+    {
+      "timestamp": "2025-10-08T00:00:34.314336",
+      "speaker": "bot",
+      "message": "Good morning! Welcome to our coffee shop. What can I get started for you today? We have some amazing seasonal drinks and fresh pastries!"
+    },
+    {
+      "timestamp": "2025-10-08T00:00:58.458623",
+      "speaker": "user",
+      "message": "What are the past fields flavor you have."
+    },
+    {
+      "timestamp": "2025-10-08T00:00:59.776922",
+      "speaker": "bot",
+      "message": "I apologize, but I'm having trouble generating a response right now. Error: 400 API key not valid. Please pass a valid API key. [reason: \"API_KEY_INVALID\"\ndomain: \"googleapis.com\"\nmetadata {\n  key: \"service\"\n  value: \"generativelanguage.googleapis.com\"\n}\n, locale: \"en-US\"\nmessage: \"API key not valid. Please pass a valid API key.\"\n]"
+    }
+  ],
+  "pronunciation_analysis": {
+    "errors_detected": 0,
+    "errors": []
+  },
+  "grammar_analysis": {
+    "errors_detected": 0,
+    "errors": []
+  },
+  "improvement_suggestions": [
+    "Use more professional terms like 'beverage' instead of 'drink'",
+    "Add 'Would you like' before suggestions to sound more professional",
+    "Use 'I recommend' instead of 'You should try'",
+    "Include 'Thank you for choosing us' in your responses"
+  ],
+  "overall_assessment": "Excellent communication with minimal errors. Great job!"
+}

@@ -1,0 +1,152 @@
+{
+  "conversation_metadata": {
+    "scenario": "Returning a Defective Item (Polite)",
+    "total_user_messages": 4,
+    "analysis_timestamp": "2025-10-07T23:23:18.060869",
+    "overall_score": 70
+  },
+  "grammar_analysis": {
+    "total_errors": 5,
+    "error_rate": 1.25,
+    "error_categories": {
+      "punctuation": 5
+    },
+    "error_details": [
+      {
+        "message_index": 1,
+        "message": "I wanna return this broken phone",
+        "error": "I wanna return",
+        "category": "punctuation",
+        "suggestion": "Check for proper capitalization",
+        "position": [
+          0,
+          14
+        ]
+      },
+      {
+        "message_index": 1,
+        "message": "I wanna return this broken phone",
+        "error": "this broken phone",
+        "category": "punctuation",
+        "suggestion": "Check for proper capitalization",
+        "position": [
+          15,
+          32
+        ]
+      },
+      {
+        "message_index": 2,
+        "message": "My order number is 12345",
+        "error": "My order number",
+        "category": "punctuation",
+        "suggestion": "Check for proper capitalization",
+        "position": [
+          0,
+          15
+        ]
+      },
+      {
+        "message_index": 3,
+        "message": "I want a refund please",
+        "error": "I want a",
+        "category": "punctuation",
+        "suggestion": "Check for proper capitalization",
+        "position": [
+          0,
+          8
+        ]
+      },
+      {
+        "message_index": 4,
+        "message": "Thank you for your help",
+        "error": "Thank you for",
+        "category": "punctuation",
+        "suggestion": "Check for proper capitalization",
+        "position": [
+          0,
+          13
+        ]
+      }
+    ],
+    "grammar_score": 50
+  },
+  "pronunciation_analysis": {
+    "total_pronunciation_errors": 0,
+    "difficult_sounds_used": [
+      "th",
+      "r",
+      "l",
+      "w"
+    ],
+    "pronunciation_errors": [],
+    "pronunciation_score": 100
+  },
+  "professional_language_analysis": {
+    "casual_language_usage": [
+      {
+        "message_index": 1,
+        "casual": "wanna",
+        "professional": "want to",
+        "message": "I wanna return this broken phone"
+      }
+    ],
+    "politeness_issues": [],
+    "professional_score": 95
+  },
+  "fluency_analysis": {
+    "total_words": 21,
+    "avg_words_per_message": 5.25,
+    "sentence_structure_variety": 0.5,
+    "fluency_score": 35.5
+  },
+  "improvement_recommendations": [
+    "Focus on punctuation - you had 5 errors in this area",
+    "Use more professional language - avoid casual expressions in formal settings"
+  ],
+  "detailed_feedback": [
+    {
+      "message_index": 1,
+      "original": "I wanna return this broken phone",
+      "suggestions": [
+        {
+          "type": "grammar",
+          "suggestion": "Check for proper capitalization"
+        },
+        {
+          "type": "professional",
+          "suggestion": "Consider using 'want to' instead of 'wanna'"
+        }
+      ]
+    },
+    {
+      "message_index": 2,
+      "original": "My order number is 12345",
+      "suggestions": [
+        {
+          "type": "grammar",
+          "suggestion": "Check for proper capitalization"
+        }
+      ]
+    },
+    {
+      "message_index": 3,
+      "original": "I want a refund please",
+      "suggestions": [
+        {
+          "type": "grammar",
+          "suggestion": "Check for proper capitalization"
+        }
+      ]
+    },
+    {
+      "message_index": 4,
+      "original": "Thank you for your help",
+      "suggestions": [
+        {
+          "type": "grammar",
+          "suggestion": "Check for proper capitalization"
+        }
+      ]
+    }
+  ]
+}

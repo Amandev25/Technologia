@@ -1,0 +1,264 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Conversational Bot - AI Language Practice</title>
+    <link rel="stylesheet" href="styles.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <!-- Header -->
+    <header class="header">
+        <div class="container">
+            <div class="logo">
+                <i class="fas fa-microphone-alt"></i>
+                <h1>Conversational Bot</h1>
+            </div>
+            <div class="header-info">
+                <span id="status-indicator" class="status-indicator">
+                    <i class="fas fa-circle"></i> Ready
+                </span>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Container -->
+    <div class="main-container">
+        <!-- Scenario Selection Screen -->
+        <div id="scenario-screen" class="screen active">
+            <div class="container">
+                <div class="welcome-section">
+                    <h2>Welcome to AI Language Practice</h2>
+                    <p>Choose a conversation scenario to practice your communication skills</p>
+                </div>
+
+                <div class="scenarios-grid">
+                    <!-- Scenario 1 -->
+                    <div class="scenario-card" data-scenario="defective_item">
+                        <div class="scenario-icon">
+                            <i class="fas fa-exchange-alt"></i>
+                        </div>
+                        <h3>Returning a Defective Item</h3>
+                        <p class="scenario-type">Polite & Persuasive</p>
+                        <p class="scenario-description">
+                            Practice polite customer service language. Learn to make requests professionally and handle returns effectively.
+                        </p>
+                        <ul class="scenario-tips">
+                            <li><i class="fas fa-check"></i> Use "I would like" instead of "I want"</li>
+                            <li><i class="fas fa-check"></i> Show empathy and understanding</li>
+                            <li><i class="fas fa-check"></i> Be solution-oriented</li>
+                        </ul>
+                        <button class="btn btn-primary" onclick="selectScenario('defective_item')">
+                            Start Practice <i class="fas fa-arrow-right"></i>
+                        </button>
+                    </div>
+
+                    <!-- Scenario 2 -->
+                    <div class="scenario-card" data-scenario="coffee_shop">
+                        <div class="scenario-icon">
+                            <i class="fas fa-coffee"></i>
+                        </div>
+                        <h3>Coffee Shop Conversation</h3>
+                        <p class="scenario-type">Casual & Professional</p>
+                        <p class="scenario-description">
+                            Practice casual yet professional service language. Learn to make recommendations and provide excellent customer service.
+                        </p>
+                        <ul class="scenario-tips">
+                            <li><i class="fas fa-check"></i> Use friendly, welcoming tone</li>
+                            <li><i class="fas fa-check"></i> Make helpful recommendations</li>
+                            <li><i class="fas fa-check"></i> Confirm orders clearly</li>
+                        </ul>
+                        <button class="btn btn-primary" onclick="selectScenario('coffee_shop')">
+                            Start Practice <i class="fas fa-arrow-right"></i>
+                        </button>
+                    </div>
+
+                    <!-- Scenario 3 -->
+                    <div class="scenario-card" data-scenario="manager_developer">
+                        <div class="scenario-icon">
+                            <i class="fas fa-briefcase"></i>
+                        </div>
+                        <h3>Manager-Developer Meeting</h3>
+                        <p class="scenario-type">Formal & Professional</p>
+                        <p class="scenario-description">
+                            Practice formal business communication. Learn to discuss technical topics professionally and provide clear updates.
+                        </p>
+                        <ul class="scenario-tips">
+                            <li><i class="fas fa-check"></i> Use formal business language</li>
+                            <li><i class="fas fa-check"></i> Provide clear status updates</li>
+                            <li><i class="fas fa-check"></i> Discuss actionable items</li>
+                        </ul>
+                        <button class="btn btn-primary" onclick="selectScenario('manager_developer')">
+                            Start Practice <i class="fas fa-arrow-right"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Conversation Screen -->
+        <div id="conversation-screen" class="screen">
+            <div class="container">
+                <div class="conversation-header">
+                    <div class="current-scenario">
+                        <i class="fas fa-comment-dots"></i>
+                        <span id="current-scenario-name">Coffee Shop</span>
+                    </div>
+                    <div class="conversation-controls">
+                        <span id="turn-counter">Turn: 0/6</span>
+                        <button class="btn btn-secondary" onclick="endConversation()">
+                            <i class="fas fa-stop"></i> End Conversation
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Chat Container -->
+                <div class="chat-container" id="chat-container">
+                    <!-- Messages will be added here dynamically -->
+                </div>
+
+                <!-- Input Area -->
+                <div class="input-area">
+                    <div class="input-methods">
+                        <!-- Voice Input -->
+                        <div class="voice-input-section">
+                            <button id="voice-btn" class="btn btn-voice" onclick="toggleVoiceInput()">
+                                <i class="fas fa-microphone"></i>
+                                <span>Hold to Speak</span>
+                            </button>
+                            <div id="voice-status" class="voice-status"></div>
+                        </div>
+
+                        <!-- Text Input -->
+                        <div class="text-input-section">
+                            <input 
+                                type="text" 
+                                id="text-input" 
+                                placeholder="Or type your response here..." 
+                                onkeypress="handleKeyPress(event)"
+                            />
+                            <button class="btn btn-send" onclick="sendTextMessage()">
+                                <i class="fas fa-paper-plane"></i>
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Audio Controls -->
+                    <div class="audio-controls">
+                        <label>
+                            <input type="checkbox" id="auto-speak" checked>
+                            <span>Auto-play bot responses</span>
+                        </label>
+                        <label>
+                            <input type="checkbox" id="show-transcript" checked>
+                            <span>Show transcripts</span>
+                        </label>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Report Screen -->
+        <div id="report-screen" class="screen">
+            <div class="container">
+                <div class="report-header">
+                    <h2><i class="fas fa-chart-line"></i> Conversation Analysis</h2>
+                    <button class="btn btn-primary" onclick="resetApp()">
+                        <i class="fas fa-redo"></i> Start New Conversation
+                    </button>
+                </div>
+
+                <div class="report-content">
+                    <!-- Overall Score -->
+                    <div class="score-card overall-score">
+                        <h3>Overall Performance</h3>
+                        <div class="score-circle" id="overall-score">
+                            <span class="score-value">0</span>
+                            <span class="score-label">/100</span>
+                        </div>
+                    </div>
+
+                    <!-- Detailed Scores -->
+                    <div class="scores-grid">
+                        <div class="score-card">
+                            <div class="score-header">
+                                <i class="fas fa-spell-check"></i>
+                                <h4>Grammar</h4>
+                            </div>
+                            <div class="score-value" id="grammar-score">0/100</div>
+                            <div class="score-details" id="grammar-details"></div>
+                        </div>
+
+                        <div class="score-card">
+                            <div class="score-header">
+                                <i class="fas fa-microphone"></i>
+                                <h4>Pronunciation</h4>
+                            </div>
+                            <div class="score-value" id="pronunciation-score">0/100</div>
+                            <div class="score-details" id="pronunciation-details"></div>
+                        </div>
+
+                        <div class="score-card">
+                            <div class="score-header">
+                                <i class="fas fa-briefcase"></i>
+                                <h4>Professional Language</h4>
+                            </div>
+                            <div class="score-value" id="professional-score">0/100</div>
+                            <div class="score-details" id="professional-details"></div>
+                        </div>
+
+                        <div class="score-card">
+                            <div class="score-header">
+                                <i class="fas fa-comments"></i>
+                                <h4>Fluency</h4>
+                            </div>
+                            <div class="score-value" id="fluency-score">0/100</div>
+                            <div class="score-details" id="fluency-details"></div>
+                        </div>
+                    </div>
+
+                    <!-- Recommendations -->
+                    <div class="recommendations-section">
+                        <h3><i class="fas fa-lightbulb"></i> Improvement Suggestions</h3>
+                        <div id="recommendations-list"></div>
+                    </div>
+
+                    <!-- Conversation History -->
+                    <div class="conversation-history-section">
+                        <h3><i class="fas fa-history"></i> Conversation Transcript</h3>
+                        <div id="conversation-transcript"></div>
+                    </div>
+
+                    <!-- Download Options -->
+                    <div class="download-section">
+                        <h3><i class="fas fa-download"></i> Download Reports</h3>
+                        <div class="download-buttons">
+                            <button class="btn btn-secondary" onclick="downloadReport('json')">
+                                <i class="fas fa-file-code"></i> Download JSON
+                            </button>
+                            <button class="btn btn-secondary" onclick="downloadReport('txt')">
+                                <i class="fas fa-file-alt"></i> Download Summary
+                            </button>
+                            <button class="btn btn-secondary" onclick="downloadReport('pdf')">
+                                <i class="fas fa-file-pdf"></i> Download PDF
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Loading Overlay -->
+    <div id="loading-overlay" class="loading-overlay">
+        <div class="spinner"></div>
+        <p>Processing...</p>
+    </div>
+
+    <!-- Scripts -->
+    <script src="app.js"></script>
+</body>
+</html>
+

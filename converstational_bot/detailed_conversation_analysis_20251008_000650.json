@@ -1,0 +1,61 @@
+{
+  "conversation_metadata": {
+    "scenario": "Coffee Shop Conversation (Casual)",
+    "total_user_messages": 1,
+    "analysis_timestamp": "2025-10-08T00:06:50.776049",
+    "overall_score": 89
+  },
+  "grammar_analysis": {
+    "total_errors": 1,
+    "error_rate": 1.0,
+    "error_categories": {
+      "punctuation": 1
+    },
+    "error_details": [
+      {
+        "message_index": 1,
+        "message": "Can I get a 4k and facebook?",
+        "error": "Can I get",
+        "category": "punctuation",
+        "suggestion": "Check for proper capitalization",
+        "position": [
+          0,
+          9
+        ]
+      }
+    ],
+    "grammar_score": 90
+  },
+  "pronunciation_analysis": {
+    "total_pronunciation_errors": 0,
+    "difficult_sounds_used": [],
+    "pronunciation_errors": [],
+    "pronunciation_score": 100
+  },
+  "professional_language_analysis": {
+    "casual_language_usage": [],
+    "politeness_issues": [],
+    "professional_score": 100
+  },
+  "fluency_analysis": {
+    "total_words": 7,
+    "avg_words_per_message": 7.0,
+    "sentence_structure_variety": 1.0,
+    "fluency_score": 64.0
+  },
+  "improvement_recommendations": [
+    "Focus on punctuation - you had 1 errors in this area"
+  ],
+  "detailed_feedback": [
+    {
+      "message_index": 1,
+      "original": "Can I get a 4k and facebook?",
+      "suggestions": [
+        {
+          "type": "grammar",
+          "suggestion": "Check for proper capitalization"
+        }
+      ]
+    }
+  ]
+}

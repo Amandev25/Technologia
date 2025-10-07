@@ -1,0 +1,89 @@
+{
+  "conversation_metadata": {
+    "scenario": "Coffee Shop Conversation (Casual)",
+    "total_user_messages": 1,
+    "analysis_timestamp": "2025-10-08T00:04:48.878417",
+    "overall_score": 85
+  },
+  "grammar_analysis": {
+    "total_errors": 3,
+    "error_rate": 3.0,
+    "error_categories": {
+      "punctuation": 3
+    },
+    "error_details": [
+      {
+        "message_index": 1,
+        "message": "What are the different types of pastries flavored you have?",
+        "error": "What are the",
+        "category": "punctuation",
+        "suggestion": "Check for proper capitalization",
+        "position": [
+          0,
+          12
+        ]
+      },
+      {
+        "message_index": 1,
+        "message": "What are the different types of pastries flavored you have?",
+        "error": "different types of",
+        "category": "punctuation",
+        "suggestion": "Check for proper capitalization",
+        "position": [
+          13,
+          31
+        ]
+      },
+      {
+        "message_index": 1,
+        "message": "What are the different types of pastries flavored you have?",
+        "error": "pastries flavored you",
+        "category": "punctuation",
+        "suggestion": "Check for proper capitalization",
+        "position": [
+          32,
+          53
+        ]
+      }
+    ],
+    "grammar_score": 70
+  },
+  "pronunciation_analysis": {
+    "total_pronunciation_errors": 0,
+    "difficult_sounds_used": [
+      "th",
+      "l",
+      "w",
+      "r",
+      "v"
+    ],
+    "pronunciation_errors": [],
+    "pronunciation_score": 100
+  },
+  "professional_language_analysis": {
+    "casual_language_usage": [],
+    "politeness_issues": [],
+    "professional_score": 100
+  },
+  "fluency_analysis": {
+    "total_words": 10,
+    "avg_words_per_message": 10.0,
+    "sentence_structure_variety": 1.0,
+    "fluency_score": 70.0
+  },
+  "improvement_recommendations": [
+    "Focus on punctuation - you had 3 errors in this area"
+  ],
+  "detailed_feedback": [
+    {
+      "message_index": 1,
+      "original": "What are the different types of pastries flavored you have?",
+      "suggestions": [
+        {
+          "type": "grammar",
+          "suggestion": "Check for proper capitalization"
+        }
+      ]
+    }
+  ]
+}

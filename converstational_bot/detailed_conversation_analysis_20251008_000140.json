@@ -1,0 +1,78 @@
+{
+  "conversation_metadata": {
+    "scenario": "Coffee Shop Conversation (Casual)",
+    "total_user_messages": 1,
+    "analysis_timestamp": "2025-10-08T00:01:40.162649",
+    "overall_score": 87
+  },
+  "grammar_analysis": {
+    "total_errors": 2,
+    "error_rate": 2.0,
+    "error_categories": {
+      "punctuation": 2
+    },
+    "error_details": [
+      {
+        "message_index": 1,
+        "message": "What are the past fields flavor you have.",
+        "error": "What are the",
+        "category": "punctuation",
+        "suggestion": "Check for proper capitalization",
+        "position": [
+          0,
+          12
+        ]
+      },
+      {
+        "message_index": 1,
+        "message": "What are the past fields flavor you have.",
+        "error": "past fields flavor",
+        "category": "punctuation",
+        "suggestion": "Check for proper capitalization",
+        "position": [
+          13,
+          31
+        ]
+      }
+    ],
+    "grammar_score": 80
+  },
+  "pronunciation_analysis": {
+    "total_pronunciation_errors": 0,
+    "difficult_sounds_used": [
+      "r",
+      "th",
+      "w",
+      "l",
+      "v"
+    ],
+    "pronunciation_errors": [],
+    "pronunciation_score": 100
+  },
+  "professional_language_analysis": {
+    "casual_language_usage": [],
+    "politeness_issues": [],
+    "professional_score": 100
+  },
+  "fluency_analysis": {
+    "total_words": 8,
+    "avg_words_per_message": 8.0,
+    "sentence_structure_variety": 1.0,
+    "fluency_score": 66.0
+  },
+  "improvement_recommendations": [
+    "Focus on punctuation - you had 2 errors in this area"
+  ],
+  "detailed_feedback": [
+    {
+      "message_index": 1,
+      "original": "What are the past fields flavor you have.",
+      "suggestions": [
+        {
+          "type": "grammar",
+          "suggestion": "Check for proper capitalization"
+        }
+      ]
+    }
+  ]
+}
