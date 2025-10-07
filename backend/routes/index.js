@@ -21,6 +21,7 @@ const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz01234567
         console.log("server error")
     } 
 })
+// for evalution of the essay
 router.post('/ai/evaluation',async(req,res)=>{
   try{
     const body = req.body;
@@ -32,7 +33,8 @@ router.post('/ai/evaluation',async(req,res)=>{
       python_url_correect_essay,
       {
         essay,
-        jwt_token: body.token
+        jwt_token: body.token,
+        lanuage:body.ln
       },
       {
         headers: {
@@ -45,6 +47,33 @@ router.post('/ai/evaluation',async(req,res)=>{
   }catch(e){
 console.error("error in the evalution", e?.response?.data || e.message);
 return res.status(500).json({message:"error in evaluation", detail: e?.response?.data || e.message})
+  }
+})
+// data will be the json form all
+router.post('/pronountion/send',async(req,res)=>{
+  try{
+    const body = req.body;
+    const response = await axios.post("http://localhost:8000/docs#/default/get_random_words_of_the_day_random_words_get",
+      {
+        word:body.word
+      },
+        {
+        headers: {
+          'Content-Type': 'application/json'
+        }
+      }
+    )
+    return res.json({message:"sucess",data:response})
+  }catch(error){
+    console.log("error in that api")
+  }
+})
+router.get('/get-on-define',async(req,res)=>{
+  try{
+    const response = await axios.get("http://127.0.0.1:8000/docs#/default/get_random_word_breakdown_random_word_get")
+    return res.json({message:"sucess",data:response});
+  }catch(error){
+    console.log(error);
   }
 })
 
