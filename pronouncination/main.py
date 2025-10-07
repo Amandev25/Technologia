@@ -82,4 +82,8 @@ class PronunciationAssistant:
             example_word = self._find_simple_english_word(comp) if lang_name == 'english' else "N/A"
             result["syllables"].append({"text": comp, "audio_path": comp_audio_path, "example_word_sound": example_word})
             
+<<<<<<< HEAD:pronouncination/main.py
         return result
+=======
+        return result
+>>>>>>> 4aaadd0f07d0f4004d64e01a940e55d81a6a6fb5:main.py
