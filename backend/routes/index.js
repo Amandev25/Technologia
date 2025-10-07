@@ -1,6 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const jwt = require('jsonwebtoken');
+const axios = require('axios');
 const password = "hello_world";
 const User = require('../model/User');
 const python_url_correect_essay = "http://localhost:8000/correct-essay";
@@ -14,11 +15,11 @@ const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz01234567
   }
   const data = new User({username:result});
   await data.save();
-  const token = jwt.sign(result);
-  return res.json({message:"login done " ,data:token},password);
+  const token = jwt.sign({ username: result }, password);
+  return res.json({message:"login done " ,data:token});
     }catch(error){
         console.log("server error")
-    }
+    } 
 })
 router.post('/ai/evaluation',async(req,res)=>{
   try{
@@ -27,20 +28,24 @@ router.post('/ai/evaluation',async(req,res)=>{
       return res.json({message:"token is missing"})
     }
     const essay = body.essay;
-    const send_data = await axios(python_url_correect_essay,{
-      method: 'POST',
-      body:{
-        essay:essay,
-        token:body.token
+    const send_data = await axios.post(
+      python_url_correect_essay,
+      {
+        essay,
+        jwt_token: body.token
+      },
+      {
+        headers: {
+          'Content-Type': 'application/json'
+        }
       }
-    })
+    );
     const userid = jwt.decode(body.token,password);
-    const data = User.updatedAt({username:userid},{
-      reports:reports.push(send_data.context)
-    })
-    return res.json({data:send_data})
+    return res.json({data:send_data.data, user:userid})
   }catch(e){
-console.log("error in the evalution");
-return res.json({message:"error in evalution of the error"})
+console.error("error in the evalution", e?.response?.data || e.message);
+return res.status(500).json({message:"error in evaluation", detail: e?.response?.data || e.message})
   }
 })
+
+module.exports = router;
