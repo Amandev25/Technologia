@@ -1,0 +1,71 @@
+2025-10-07 16:40:48,323 - essay_corrector - WARNING - Essay validation failed: too short - 5 characters
+2025-10-07 16:40:48,323 - essay_corrector - WARNING - JWT validation failed: invalid format - 2 parts instead of 3
+2025-10-07 16:40:48,776 - main - INFO - Test log message from main module
+2025-10-07 16:50:04,169 - main - INFO - Received essay correction request for essay of length: 542
+2025-10-07 16:50:04,177 - main - INFO - JWT token length: 155
+2025-10-07 16:50:04,178 - main - INFO - Starting input validation
+2025-10-07 16:50:04,180 - main - INFO - Input validation passed
+2025-10-07 16:50:04,181 - main - INFO - Calling essay correction function
+2025-10-07 16:50:04,182 - essay_corrector - INFO - Starting essay correction process
+2025-10-07 16:50:04,183 - essay_corrector - INFO - Essay length: 542
+2025-10-07 16:50:04,183 - essay_corrector - INFO - JWT token length: 155
+2025-10-07 16:50:04,184 - essay_corrector - INFO - Calling LLM for essay correction...
+2025-10-07 16:50:04,185 - essay_corrector - INFO - Starting LLM call with model: gemini-2.0-flash
+2025-10-07 16:50:04,185 - essay_corrector - INFO - System instruction length: 1339
+2025-10-07 16:50:04,186 - essay_corrector - INFO - Content length: 542
+2025-10-07 16:50:04,190 - essay_corrector - INFO - Generating content with Gemini API
+2025-10-07 16:50:13,866 - essay_corrector - INFO - LLM call successful - Prompt tokens: 270, Completion tokens: 516
+2025-10-07 16:50:13,869 - essay_corrector - INFO - Parsing LLM response
+2025-10-07 16:50:13,870 - essay_corrector - ERROR - Failed to parse LLM response as JSON: Expecting value: line 1 column 1 (char 0)
+2025-10-07 16:50:13,871 - essay_corrector - ERROR - Raw LLM response: ```json
+{
+  "corrected_essay": "Learning is really important for everyone. You should always try to get new knowledge, because it makes you smart. For example, I learned how to bake a chocolate cake last week. It was difficult at first, but now I practice every day! My teacher says that consistency helps. It is essential to keep your brain active, or it will become lazy. We must never stop questing and exploring the world. There is so much to see, and reading books is one way to see it. This is ...
+2025-10-07 16:50:13,874 - essay_corrector - INFO - Essay correction completed successfully
+2025-10-07 16:50:13,875 - essay_corrector - INFO - Corrected essay length: 542
+2025-10-07 16:50:13,876 - essay_corrector - INFO - Report length: 88
+2025-10-07 16:50:13,877 - main - INFO - Essay correction completed successfully
+2025-10-07 16:50:13,878 - main - INFO - Token usage: {'prompt_tokens': 270, 'completion_tokens': 516}
+2025-10-07 16:53:00,662 - main - INFO - Received essay correction request for essay of length: 542
+2025-10-07 16:53:00,663 - main - INFO - JWT token length: 155
+2025-10-07 16:53:00,664 - main - INFO - Starting input validation
+2025-10-07 16:53:00,665 - main - INFO - Input validation passed
+2025-10-07 16:53:00,665 - main - INFO - Calling essay correction function
+2025-10-07 16:53:00,666 - essay_corrector - INFO - Starting essay correction process
+2025-10-07 16:53:00,667 - essay_corrector - INFO - Essay length: 542
+2025-10-07 16:53:00,667 - essay_corrector - INFO - JWT token length: 155
+2025-10-07 16:53:00,669 - essay_corrector - INFO - Calling LLM for essay correction...
+2025-10-07 16:53:00,671 - essay_corrector - INFO - Starting LLM call with model: gemini-2.0-flash
+2025-10-07 16:53:00,671 - essay_corrector - INFO - System instruction length: 985
+2025-10-07 16:53:00,673 - essay_corrector - INFO - Content length: 542
+2025-10-07 16:53:00,676 - essay_corrector - INFO - Generating content with Gemini API
+2025-10-07 16:53:04,584 - essay_corrector - INFO - LLM call successful - Prompt tokens: 243, Completion tokens: 194
+2025-10-07 16:53:04,585 - essay_corrector - INFO - Parsing LLM response
+2025-10-07 16:53:04,586 - essay_corrector - INFO - Raw response length: 1241
+2025-10-07 16:53:04,587 - essay_corrector - INFO - Successfully parsed LLM response as JSON
+2025-10-07 16:53:04,589 - essay_corrector - INFO - Essay correction completed successfully
+2025-10-07 16:53:04,590 - essay_corrector - INFO - Corrected essay length: 549
+2025-10-07 16:53:04,591 - essay_corrector - INFO - Report length: 627
+2025-10-07 16:53:04,592 - main - INFO - Essay correction completed successfully
+2025-10-07 16:53:04,592 - main - INFO - Token usage: {'prompt_tokens': 243, 'completion_tokens': 194}
+2025-10-07 17:21:25,997 - main - INFO - Received essay correction request for essay of length: 542
+2025-10-07 17:21:26,012 - main - INFO - JWT token length: 155
+2025-10-07 17:21:26,012 - main - INFO - Starting input validation
+2025-10-07 17:21:26,014 - main - INFO - Input validation passed
+2025-10-07 17:21:26,014 - main - INFO - Calling essay correction function
+2025-10-07 17:21:26,015 - essay_corrector - INFO - Starting essay correction process
+2025-10-07 17:21:26,016 - essay_corrector - INFO - Essay length: 542
+2025-10-07 17:21:26,016 - essay_corrector - INFO - JWT token length: 155
+2025-10-07 17:21:26,017 - essay_corrector - INFO - Calling LLM for essay correction...
+2025-10-07 17:21:26,017 - essay_corrector - INFO - Starting LLM call with model: gemini-2.0-flash
+2025-10-07 17:21:26,018 - essay_corrector - INFO - System instruction length: 985
+2025-10-07 17:21:26,018 - essay_corrector - INFO - Content length: 542
+2025-10-07 17:21:26,029 - essay_corrector - INFO - Generating content with Gemini API
+2025-10-07 17:21:29,745 - essay_corrector - INFO - LLM call successful - Prompt tokens: 243, Completion tokens: 202
+2025-10-07 17:21:29,748 - essay_corrector - INFO - Parsing LLM response
+2025-10-07 17:21:29,750 - essay_corrector - INFO - Raw response length: 1298
+2025-10-07 17:21:29,750 - essay_corrector - INFO - Successfully parsed LLM response as JSON
+2025-10-07 17:21:29,751 - essay_corrector - INFO - Essay correction completed successfully
+2025-10-07 17:21:29,752 - essay_corrector - INFO - Corrected essay length: 549
+2025-10-07 17:21:29,752 - essay_corrector - INFO - Report length: 684
+2025-10-07 17:21:29,754 - main - INFO - Essay correction completed successfully
+2025-10-07 17:21:29,755 - main - INFO - Token usage: {'prompt_tokens': 243, 'completion_tokens': 202}
