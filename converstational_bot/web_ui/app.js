@@ -41,7 +41,19 @@ function initializeSpeechRecognition() {
         
         recognition.onerror = function(event) {
             console.error('Speech recognition error:', event.error);
-            document.getElementById('voice-status').textContent = `Error: ${event.error}`;
+            
+            // Handle specific error types
+            if (event.error === 'not-allowed') {
+                document.getElementById('voice-status').textContent = '❌ Microphone permission denied. Please allow microphone access.';
+                showPermissionInstructions();
+            } else if (event.error === 'no-speech') {
+                document.getElementById('voice-status').textContent = '🔇 No speech detected. Try again.';
+            } else if (event.error === 'audio-capture') {
+                document.getElementById('voice-status').textContent = '🎤 No microphone found. Please check your microphone.';
+            } else {
+                document.getElementById('voice-status').textContent = `Error: ${event.error}`;
+            }
+            
             stopVoiceInput();
         };
         
@@ -49,10 +61,58 @@ function initializeSpeechRecognition() {
             console.log('Speech recognition ended');
             stopVoiceInput();
         };
+        
+        // Request permission once on initialization
+        requestMicrophonePermission();
+        
     } else {
         console.warn('Speech recognition not supported in this browser');
         document.getElementById('voice-btn').style.display = 'none';
     }
+}
+
+// Request microphone permission once
+function requestMicrophonePermission() {
+    if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
+        // Show loading state
+        document.getElementById('voice-status').textContent = '🎤 Requesting microphone permission...';
+        
+        navigator.mediaDevices.getUserMedia({ audio: true })
+            .then(function(stream) {
+                console.log('Microphone permission granted');
+                document.getElementById('voice-status').textContent = '🎤 Ready to listen';
+                // Stop the stream immediately as we only needed permission
+                stream.getTracks().forEach(track => track.stop());
+            })
+            .catch(function(error) {
+                console.error('Microphone permission denied:', error);
+                if (error.name === 'NotAllowedError') {
+                    document.getElementById('voice-status').textContent = '❌ Microphone permission denied';
+                    showPermissionInstructions();
+                } else if (error.name === 'NotFoundError') {
+                    document.getElementById('voice-status').textContent = '🎤 No microphone found';
+                } else {
+                    document.getElementById('voice-status').textContent = '❌ Microphone error: ' + error.name;
+                }
+            });
+    } else {
+        console.warn('getUserMedia not supported');
+        document.getElementById('voice-status').textContent = '❌ Browser does not support microphone access';
+    }
+}
+
+// Show permission instructions
+function showPermissionInstructions() {
+    const statusElement = document.getElementById('voice-status');
+    statusElement.innerHTML = `
+        <div style="text-align: center; padding: 10px; background: #fff3cd; border: 1px solid #ffeaa7; border-radius: 5px; margin: 10px 0;">
+            <strong>🎤 Microphone Permission Required</strong><br>
+            <small>Click the microphone icon in your browser's address bar and allow microphone access.</small><br>
+            <button onclick="requestMicrophonePermission()" style="margin-top: 5px; padding: 5px 10px; background: #007bff; color: white; border: none; border-radius: 3px; cursor: pointer;">
+                Try Again
+            </button>
+        </div>
+    `;
 }
 
 // Scenario Selection
@@ -401,21 +461,52 @@ function generateFallbackReport() {
 
 // Display Report
 function displayReport(report) {
+    // Check if there are any user messages
+    const userMessageCount = report.conversation_history?.filter(msg => msg.speaker === 'user').length || 0;
+    
     // Overall Score
-    document.getElementById('overall-score').querySelector('.score-value').textContent = report.overall_score || 0;
+    const overallScoreElement = document.getElementById('overall-score').querySelector('.score-value');
+    if (userMessageCount === 0) {
+        overallScoreElement.textContent = 'N/A';
+        overallScoreElement.parentElement.querySelector('.score-details').textContent = 'No conversation to analyze';
+    } else {
+        overallScoreElement.textContent = report.overall_score || 0;
+    }
     
     // Individual Scores
-    document.getElementById('grammar-score').textContent = `${report.grammar?.score || 0}/100`;
-    document.getElementById('grammar-details').textContent = report.grammar?.details || '';
+    if (userMessageCount === 0) {
+        // No user messages - show N/A for all scores
+        document.getElementById('grammar-score').textContent = 'N/A';
+        document.getElementById('grammar-details').textContent = 'No user messages to analyze';
+        
+        document.getElementById('pronunciation-score').textContent = 'N/A';
+        document.getElementById('pronunciation-details').textContent = 'No user messages to analyze';
+        
+        document.getElementById('professional-score').textContent = 'N/A';
+        document.getElementById('professional-details').textContent = 'No user messages to analyze';
+        
+        document.getElementById('fluency-score').textContent = 'N/A';
+        document.getElementById('fluency-details').textContent = 'No user messages to analyze';
+    } else {
+        // Normal display with actual scores
+        document.getElementById('grammar-score').textContent = `${report.grammar?.score || 0}/100`;
+        document.getElementById('grammar-details').textContent = report.grammar?.details || '';
+        
+        document.getElementById('pronunciation-score').textContent = `${report.pronunciation?.score || 0}/100`;
+        document.getElementById('pronunciation-details').textContent = report.pronunciation?.details || '';
+        
+        document.getElementById('professional-score').textContent = `${report.professional?.score || 0}/100`;
+        document.getElementById('professional-details').textContent = report.professional?.details || '';
+        
+        document.getElementById('fluency-score').textContent = `${report.fluency?.score || 0}/100`;
+        document.getElementById('fluency-details').textContent = report.fluency?.details || '';
+    }
     
-    document.getElementById('pronunciation-score').textContent = `${report.pronunciation?.score || 0}/100`;
-    document.getElementById('pronunciation-details').textContent = report.pronunciation?.details || '';
+    // LLM Insights
+    displayLLMInsights(report);
     
-    document.getElementById('professional-score').textContent = `${report.professional?.score || 0}/100`;
-    document.getElementById('professional-details').textContent = report.professional?.details || '';
-    
-    document.getElementById('fluency-score').textContent = `${report.fluency?.score || 0}/100`;
-    document.getElementById('fluency-details').textContent = report.fluency?.details || '';
+    // Detailed Errors
+    displayDetailedErrors(report);
     
     // Recommendations
     const recommendationsList = document.getElementById('recommendations-list');
@@ -443,6 +534,201 @@ function displayReport(report) {
         `;
         transcript.appendChild(div);
     });
+}
+
+// Display LLM Insights
+function displayLLMInsights(report) {
+    const insightsSection = document.getElementById('llm-insights-section');
+    const insightsList = document.getElementById('llm-insights-list');
+    
+    // Check if there are any user messages
+    const userMessageCount = report.conversation_history?.filter(msg => msg.speaker === 'user').length || 0;
+    
+    // Check if we have LLM insights
+    const insights = report.grammar?.insights || report.insights || [];
+    
+    if (userMessageCount === 0) {
+        // No user messages - show helpful message
+        insightsSection.style.display = 'block';
+        insightsList.innerHTML = `
+            <div class="insight-item">
+                💡 No conversation to analyze yet. Start speaking to get AI-powered insights about your communication style!
+            </div>
+        `;
+    } else if (insights && insights.length > 0) {
+        insightsSection.style.display = 'block';
+        insightsList.innerHTML = '';
+        
+        insights.forEach(insight => {
+            const div = document.createElement('div');
+            div.className = 'insight-item';
+            div.textContent = insight;
+            insightsList.appendChild(div);
+        });
+    } else {
+        insightsSection.style.display = 'none';
+    }
+}
+
+// Display Detailed Errors
+function displayDetailedErrors(report) {
+    // Check if there are any user messages
+    const userMessageCount = report.conversation_history?.filter(msg => msg.speaker === 'user').length || 0;
+    
+    // Grammar and Spelling Errors
+    const grammarPanel = document.getElementById('grammar-errors-detail');
+    grammarPanel.innerHTML = '';
+    
+    const grammarErrors = report.grammar?.errors || [];
+    const spellingErrors = report.grammar?.spelling_errors || [];
+    
+    if (userMessageCount === 0) {
+        // No user messages - edge case
+        grammarPanel.innerHTML = `
+            <div class="no-errors-message">
+                <i class="fas fa-info-circle"></i>
+                <p>No user messages to analyze. Start a conversation to see detailed error analysis!</p>
+            </div>
+        `;
+    } else if (grammarErrors.length === 0 && spellingErrors.length === 0) {
+        grammarPanel.innerHTML = `
+            <div class="no-errors-message">
+                <i class="fas fa-check-circle"></i>
+                <p>Great job! No grammar or spelling errors detected.</p>
+            </div>
+        `;
+    } else {
+        // Display grammar errors
+        grammarErrors.forEach(error => {
+            const errorCard = createGrammarErrorCard(error);
+            grammarPanel.appendChild(errorCard);
+        });
+        
+        // Display spelling errors
+        spellingErrors.forEach(error => {
+            const errorCard = createSpellingErrorCard(error);
+            grammarPanel.appendChild(errorCard);
+        });
+    }
+    
+    // Pronunciation Errors
+    const pronunciationPanel = document.getElementById('pronunciation-errors-detail');
+    pronunciationPanel.innerHTML = '';
+    
+    const pronunciationErrors = report.pronunciation?.errors || [];
+    const likelyErrors = report.pronunciation?.likely_errors || [];
+    
+    const allPronunciationErrors = [...pronunciationErrors, ...likelyErrors];
+    
+    if (userMessageCount === 0) {
+        // No user messages - edge case
+        pronunciationPanel.innerHTML = `
+            <div class="no-errors-message">
+                <i class="fas fa-info-circle"></i>
+                <p>No user messages to analyze. Start a conversation to see pronunciation tips!</p>
+            </div>
+        `;
+    } else if (allPronunciationErrors.length === 0) {
+        pronunciationPanel.innerHTML = `
+            <div class="no-errors-message">
+                <i class="fas fa-check-circle"></i>
+                <p>Excellent pronunciation! No issues detected.</p>
+            </div>
+        `;
+    } else {
+        allPronunciationErrors.forEach(error => {
+            const errorCard = createPronunciationErrorCard(error);
+            pronunciationPanel.appendChild(errorCard);
+        });
+    }
+}
+
+// Create Grammar Error Card
+function createGrammarErrorCard(error) {
+    const div = document.createElement('div');
+    div.className = 'error-card';
+    
+    div.innerHTML = `
+        <div class="error-header">
+            <span class="error-type">${error.error_type || 'Grammar Error'}</span>
+            <span class="message-index">Message #${error.message_index || 'N/A'}</span>
+        </div>
+        <div class="error-content">
+            <div class="error-text">
+                <div><strong>Original:</strong> <span class="original-text">${error.original_text || error.original || 'N/A'}</span></div>
+                <div><strong>Correction:</strong> <span class="corrected-text">${error.correction || error.corrected || 'N/A'}</span></div>
+            </div>
+            <div class="error-explanation">
+                <strong>Explanation:</strong> ${error.explanation || 'No explanation provided'}
+            </div>
+        </div>
+    `;
+    
+    return div;
+}
+
+// Create Spelling Error Card
+function createSpellingErrorCard(error) {
+    const div = document.createElement('div');
+    div.className = 'error-card spelling';
+    
+    div.innerHTML = `
+        <div class="error-header">
+            <span class="error-type spelling">Spelling Error</span>
+            <span class="message-index">Message #${error.message_index || 'N/A'}</span>
+        </div>
+        <div class="error-content">
+            <div class="error-text">
+                <div><strong>Misspelled:</strong> <span class="original-text">${error.misspelled_word || error.misspelled || 'N/A'}</span></div>
+                <div><strong>Correct:</strong> <span class="corrected-text">${error.correct_spelling || error.correct || 'N/A'}</span></div>
+            </div>
+            ${error.context ? `<div class="error-explanation"><strong>Context:</strong> ${error.context}</div>` : ''}
+        </div>
+    `;
+    
+    return div;
+}
+
+// Create Pronunciation Error Card
+function createPronunciationErrorCard(error) {
+    const div = document.createElement('div');
+    div.className = 'error-card pronunciation';
+    
+    div.innerHTML = `
+        <div class="error-header">
+            <span class="error-type pronunciation">Pronunciation</span>
+        </div>
+        <div class="error-content">
+            <div class="pronunciation-tip">
+                <div><strong>Word:</strong> ${error.word || 'N/A'}</div>
+                ${error.phonetic ? `<div><strong>Phonetic:</strong> <span class="phonetic">${error.phonetic}</span></div>` : ''}
+                ${error.tip ? `<div class="tip-text"><strong>Tip:</strong> ${error.tip}</div>` : ''}
+                ${error.suggestion ? `<div class="tip-text"><strong>Suggestion:</strong> ${error.suggestion}</div>` : ''}
+            </div>
+        </div>
+    `;
+    
+    return div;
+}
+
+// Switch Error Tab
+function switchErrorTab(tab) {
+    // Update tab buttons
+    document.querySelectorAll('.error-tab').forEach(btn => {
+        btn.classList.remove('active');
+    });
+    event.target.closest('.error-tab').classList.add('active');
+    
+    // Update panels
+    document.querySelectorAll('.error-detail-panel').forEach(panel => {
+        panel.classList.remove('active');
+    });
+    
+    if (tab === 'grammar') {
+        document.getElementById('grammar-errors-detail').classList.add('active');
+    } else if (tab === 'pronunciation') {
+        document.getElementById('pronunciation-errors-detail').classList.add('active');
+    }
 }
 
 // Download Report

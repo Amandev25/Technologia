@@ -1,7 +1,6 @@
 """
 Report Generator for Conversation Analysis
 Analyzes grammar, pronunciation, and provides improvement suggestions.
-Enhanced with LLM-powered detailed analysis.
 """
 
 import re
@@ -10,24 +9,12 @@ from datetime import datetime
 from typing import Dict, List, Tuple, Optional
 from collections import Counter
 import difflib
-import google.generativeai as genai
-import config
 
 class ReportGenerator:
-    def __init__(self, use_llm: bool = True):
+    def __init__(self):
         self.grammar_rules = self._initialize_grammar_rules()
         self.pronunciation_patterns = self._initialize_pronunciation_patterns()
         self.professional_alternatives = self._initialize_professional_alternatives()
-        self.use_llm = use_llm
-        
-        # Initialize LLM for enhanced analysis
-        if self.use_llm:
-            try:
-                genai.configure(api_key=config.GEMINI_API_KEY)
-                self.llm_model = genai.GenerativeModel('gemini-2.0-flash-exp')
-            except Exception as e:
-                print(f"Warning: Could not initialize LLM for report generation: {e}")
-                self.use_llm = False
         
     def _initialize_grammar_rules(self) -> Dict:
         """Initialize common grammar rules for analysis."""
@@ -139,21 +126,11 @@ class ReportGenerator:
         # Extract user messages
         user_messages = [msg['message'] for msg in conversation_history if msg['speaker'] == 'user']
         
-        # Perform basic analysis
+        # Perform analysis
         grammar_analysis = self._analyze_grammar(user_messages)
         pronunciation_analysis = self._analyze_pronunciation_detailed(user_messages, pronunciation_errors)
         professional_analysis = self._analyze_professional_language(user_messages, scenario)
         fluency_analysis = self._analyze_fluency(user_messages)
-        
-        # Enhanced LLM analysis if enabled
-        llm_enhanced_analysis = {}
-        if self.use_llm and user_messages:
-            llm_enhanced_analysis = self._llm_enhanced_analysis(user_messages, scenario)
-            
-            # Merge LLM insights with basic analysis
-            if llm_enhanced_analysis:
-                grammar_analysis = self._merge_grammar_analysis(grammar_analysis, llm_enhanced_analysis.get('grammar', {}))
-                pronunciation_analysis = self._merge_pronunciation_analysis(pronunciation_analysis, llm_enhanced_analysis.get('pronunciation', {}))
         
         # Generate overall assessment
         overall_score = self._calculate_overall_score(grammar_analysis, pronunciation_analysis, professional_analysis, fluency_analysis)
@@ -163,14 +140,12 @@ class ReportGenerator:
                 "scenario": scenario,
                 "total_user_messages": len(user_messages),
                 "analysis_timestamp": datetime.now().isoformat(),
-                "overall_score": overall_score,
-                "llm_enhanced": self.use_llm and bool(llm_enhanced_analysis)
+                "overall_score": overall_score
             },
             "grammar_analysis": grammar_analysis,
             "pronunciation_analysis": pronunciation_analysis,
             "professional_language_analysis": professional_analysis,
             "fluency_analysis": fluency_analysis,
-            "llm_insights": llm_enhanced_analysis.get('insights', []) if llm_enhanced_analysis else [],
             "improvement_recommendations": self._generate_improvement_recommendations(
                 grammar_analysis, pronunciation_analysis, professional_analysis, scenario
             ),
@@ -208,13 +183,10 @@ class ReportGenerator:
         
         return {
             "total_errors": total_errors,
-            "error_rate": round(total_errors / len(messages), 2) if messages else 0,
+            "error_rate": total_errors / len(messages) if messages else 0,
             "error_categories": dict(error_categories),
             "error_details": error_details,
-            "grammar_score": max(0, 100 - (total_errors * 10)),  # Simple scoring
-            "errors": [],  # Will be populated by LLM if enabled
-            "spelling_errors": [],  # Will be populated by LLM if enabled
-            "insights": []  # Will be populated by LLM if enabled
+            "grammar_score": max(0, 100 - (total_errors * 10))  # Simple scoring
         }
     
     def _analyze_pronunciation_detailed(self, messages: List[str], stt_errors: List[str]) -> Dict:
@@ -256,9 +228,7 @@ class ReportGenerator:
             "total_pronunciation_errors": len(pronunciation_errors),
             "difficult_sounds_used": list(difficult_sounds_used),
             "pronunciation_errors": pronunciation_errors,
-            "pronunciation_score": max(0, 100 - (len(pronunciation_errors) * 15)),
-            "errors": [],  # Will be populated by LLM if enabled
-            "likely_errors": []  # Will be populated by LLM if enabled
+            "pronunciation_score": max(0, 100 - (len(pronunciation_errors) * 15))
         }
     
     def _analyze_professional_language(self, messages: List[str], scenario: str) -> Dict:
@@ -325,9 +295,9 @@ class ReportGenerator:
         
         return {
             "total_words": total_words,
-            "avg_words_per_message": round(avg_words_per_message, 1),
-            "sentence_structure_variety": round(structure_variety, 2),
-            "fluency_score": int(min(100, (avg_words_per_message * 2) + (structure_variety * 50)))
+            "avg_words_per_message": avg_words_per_message,
+            "sentence_structure_variety": structure_variety,
+            "fluency_score": min(100, (avg_words_per_message * 2) + (structure_variety * 50))
         }
     
     def _calculate_overall_score(self, grammar: Dict, pronunciation: Dict, professional: Dict, fluency: Dict) -> int:
@@ -483,191 +453,3 @@ IMPROVEMENT RECOMMENDATIONS
             summary += f"{i}. {rec}\n"
         
         return summary
-    
-    def _llm_enhanced_analysis(self, user_messages: List[str], scenario: str) -> Dict:
-        """Use LLM to provide detailed, pinpointed analysis of grammar, spelling, and errors."""
-        try:
-            # Combine all user messages
-            combined_text = "\n".join([f"Message {i+1}: {msg}" for i, msg in enumerate(user_messages)])
-            
-            # Create comprehensive analysis prompt
-            prompt = f"""You are an expert English language teacher analyzing a student's conversation practice.
-
-Scenario: {scenario}
-
-Student's Messages:
-{combined_text}
-
-Please provide a detailed analysis in the following JSON format:
-
-{{
-  "grammar": {{
-    "errors": [
-      {{
-        "message_index": 1,
-        "original_text": "exact text with error",
-        "error_type": "subject-verb agreement/tense/article/etc",
-        "correction": "corrected text",
-        "explanation": "brief explanation"
-      }}
-    ],
-    "spelling_errors": [
-      {{
-        "message_index": 1,
-        "misspelled_word": "word",
-        "correct_spelling": "word",
-        "context": "sentence containing the error"
-      }}
-    ]
-  }},
-  "pronunciation": {{
-    "likely_errors": [
-      {{
-        "word": "word that may be mispronounced",
-        "phonetic": "correct pronunciation guide",
-        "tip": "how to pronounce correctly"
-      }}
-    ]
-  }},
-  "insights": [
-    "Specific insight about communication style",
-    "Strength observed in the conversation",
-    "Area needing improvement with example"
-  ]
-}}
-
-Be specific and pinpoint exact errors. If there are no errors in a category, use an empty array.
-Focus on being helpful and constructive."""
-
-            # Get LLM response
-            response = self.llm_model.generate_content(prompt)
-            
-            # Parse JSON response
-            response_text = response.text.strip()
-            
-            # Debug: Print raw LLM response
-            print(f"\n=== DEBUG: Raw LLM Response ===")
-            print(f"Response length: {len(response_text)}")
-            print(f"First 500 chars: {response_text[:500]}")
-            print("===============================")
-            
-            # Extract JSON from response (handle markdown code blocks)
-            if '```json' in response_text:
-                json_start = response_text.find('```json') + 7
-                json_end = response_text.find('```', json_start)
-                response_text = response_text[json_start:json_end].strip()
-            elif '```' in response_text:
-                json_start = response_text.find('```') + 3
-                json_end = response_text.find('```', json_start)
-                response_text = response_text[json_start:json_end].strip()
-            
-            # Debug: Print extracted JSON
-            print(f"\n=== DEBUG: Extracted JSON ===")
-            print(f"JSON length: {len(response_text)}")
-            print(f"JSON content: {response_text}")
-            print("=============================")
-            
-            analysis = json.loads(response_text)
-            
-            # Debug: Print parsed analysis
-            print(f"\n=== DEBUG: Parsed Analysis ===")
-            print(f"Grammar errors: {analysis.get('grammar', {}).get('errors', [])}")
-            print(f"Spelling errors: {analysis.get('grammar', {}).get('spelling_errors', [])}")
-            print(f"Pronunciation errors: {analysis.get('pronunciation', {}).get('likely_errors', [])}")
-            print(f"Insights: {analysis.get('insights', [])}")
-            print("==============================")
-            
-            return analysis
-            
-        except json.JSONDecodeError as e:
-            print(f"Warning: Could not parse LLM response as JSON: {e}")
-            return {}
-        except Exception as e:
-            print(f"Warning: LLM analysis failed: {e}")
-            return {}
-    
-    def _merge_grammar_analysis(self, basic_analysis: Dict, llm_analysis: Dict) -> Dict:
-        """Merge basic grammar analysis with LLM-enhanced analysis."""
-        print(f"\n=== DEBUG: Merge Grammar Analysis ===")
-        print(f"LLM analysis received: {llm_analysis}")
-        
-        if not llm_analysis:
-            print("No LLM analysis to merge")
-            return basic_analysis
-        
-        # Add LLM-detected errors to the basic analysis
-        llm_errors = llm_analysis.get('errors', [])
-        llm_spelling = llm_analysis.get('spelling_errors', [])
-        
-        print(f"LLM errors found: {len(llm_errors)}")
-        print(f"LLM spelling errors found: {len(llm_spelling)}")
-        print("=====================================")
-        
-        # Create enhanced error details
-        enhanced_errors = basic_analysis.get('error_details', []).copy()
-        
-        for error in llm_errors:
-            enhanced_errors.append({
-                "message_index": error.get('message_index', 0),
-                "error": error.get('original_text', ''),
-                "correction": error.get('correction', ''),
-                "category": error.get('error_type', 'grammar'),
-                "suggestion": error.get('explanation', ''),
-                "source": "llm"
-            })
-        
-        for spelling in llm_spelling:
-            enhanced_errors.append({
-                "message_index": spelling.get('message_index', 0),
-                "error": spelling.get('misspelled_word', ''),
-                "correction": spelling.get('correct_spelling', ''),
-                "category": "spelling",
-                "suggestion": f"Correct spelling: {spelling.get('correct_spelling', '')}",
-                "context": spelling.get('context', ''),
-                "source": "llm"
-            })
-        
-        # Update counts
-        basic_analysis['error_details'] = enhanced_errors
-        basic_analysis['total_errors'] = len(enhanced_errors)
-        basic_analysis['llm_detected_errors'] = len(llm_errors) + len(llm_spelling)
-        
-        # Add separate arrays for frontend display
-        basic_analysis['errors'] = llm_errors if llm_errors else []
-        basic_analysis['spelling_errors'] = llm_spelling if llm_spelling else []
-        basic_analysis['insights'] = llm_analysis.get('insights', [])
-        
-        # Recalculate score
-        total_messages = basic_analysis.get('error_rate', 0)
-        if total_messages > 0:
-            basic_analysis['error_rate'] = basic_analysis['total_errors'] / total_messages
-        
-        return basic_analysis
-    
-    def _merge_pronunciation_analysis(self, basic_analysis: Dict, llm_analysis: Dict) -> Dict:
-        """Merge basic pronunciation analysis with LLM-enhanced analysis."""
-        if not llm_analysis:
-            return basic_analysis
-        
-        # Add LLM pronunciation insights
-        llm_pronunciation = llm_analysis.get('likely_errors', [])
-        
-        pronunciation_errors = basic_analysis.get('pronunciation_errors', []).copy()
-        
-        for error in llm_pronunciation:
-            pronunciation_errors.append({
-                "word": error.get('word', ''),
-                "phonetic": error.get('phonetic', ''),
-                "tip": error.get('tip', ''),
-                "type": "llm_detected",
-                "source": "llm"
-            })
-        
-        basic_analysis['pronunciation_errors'] = pronunciation_errors
-        basic_analysis['llm_pronunciation_tips'] = llm_pronunciation
-        
-        # Add separate arrays for frontend display
-        basic_analysis['errors'] = pronunciation_errors if pronunciation_errors else []
-        basic_analysis['likely_errors'] = llm_pronunciation if llm_pronunciation else []
-        
-        return basic_analysis

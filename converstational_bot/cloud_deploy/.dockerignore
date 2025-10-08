@@ -1,0 +1,56 @@
+# Git
+.git
+.gitignore
+.gcloudignore
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+env/
+venv/
+ENV/
+*.egg-info/
+
+# IDE
+.vscode/
+.idea/
+*.swp
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Environment (will be set via Cloud Run)
+.env
+.env.local
+
+# Test files
+test_*.py
+tests/
+
+# Documentation
+*.md
+
+# Audio files
+*.wav
+*.mp3
+
+# Reports
+conversation_report_*.json
+conversation_summary_*.txt
+detailed_conversation_analysis_*.json
+
+# Logs
+logs/
+*.log
+
+# Web UI (not needed for API)
+web_ui/
+streamlit_app.py
+run_ui.py
+
+# Examples
+env.example

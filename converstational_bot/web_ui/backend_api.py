@@ -22,7 +22,7 @@ CORS(app)  # Enable CORS for frontend requests
 
 # Global instances
 conversation_manager = None
-report_generator = ReportGenerator()
+report_generator = ReportGenerator(use_llm=True)  # Enable LLM-enhanced analysis
 current_scenario = None
 
 @app.route('/api/start_conversation', methods=['POST'])
@@ -95,17 +95,32 @@ def generate_report():
         # Generate detailed analysis
         detailed_report = report_generator.analyze_conversation(conversation_report)
         
+        # Debug: Print error arrays
+        print("\n=== DEBUG: Grammar Analysis ===")
+        print(f"Errors: {detailed_report['grammar_analysis'].get('errors', [])}")
+        print(f"Spelling Errors: {detailed_report['grammar_analysis'].get('spelling_errors', [])}")
+        print(f"Insights: {detailed_report['grammar_analysis'].get('insights', [])}")
+        print("\n=== DEBUG: Pronunciation Analysis ===")
+        print(f"Errors: {detailed_report['pronunciation_analysis'].get('errors', [])}")
+        print(f"Likely Errors: {detailed_report['pronunciation_analysis'].get('likely_errors', [])}")
+        print("===============================\n")
+        
         # Extract key metrics
         report = {
             'overall_score': detailed_report['conversation_metadata']['overall_score'],
             'grammar': {
                 'score': detailed_report['grammar_analysis'].get('grammar_score', 0),
-                'errors': detailed_report['grammar_analysis'].get('total_errors', 0),
+                'errors': detailed_report['grammar_analysis'].get('errors', []),
+                'spelling_errors': detailed_report['grammar_analysis'].get('spelling_errors', []),
+                'insights': detailed_report['grammar_analysis'].get('insights', []),
+                'total_errors': detailed_report['grammar_analysis'].get('total_errors', 0),
                 'details': f"Total errors: {detailed_report['grammar_analysis'].get('total_errors', 0)}. Error rate: {detailed_report['grammar_analysis'].get('error_rate', 0):.2f} per message."
             },
             'pronunciation': {
                 'score': detailed_report['pronunciation_analysis'].get('pronunciation_score', 0),
-                'errors': detailed_report['pronunciation_analysis'].get('total_pronunciation_errors', 0),
+                'errors': detailed_report['pronunciation_analysis'].get('errors', []),
+                'likely_errors': detailed_report['pronunciation_analysis'].get('likely_errors', []),
+                'total_errors': detailed_report['pronunciation_analysis'].get('total_pronunciation_errors', 0),
                 'details': f"Pronunciation errors detected: {detailed_report['pronunciation_analysis'].get('total_pronunciation_errors', 0)}. Difficult sounds: {', '.join(detailed_report['pronunciation_analysis'].get('difficult_sounds_used', []))}"
             },
             'professional': {

@@ -21,10 +21,12 @@ A modern HTML/CSS/JavaScript web interface for the Conversational Bot with speec
 3. **Manager-Developer Meeting (Formal)**
 
 ### 📈 **Real-time Analysis**
-- Grammar scoring
-- Pronunciation feedback
+- Grammar scoring with pinpointed errors
+- Pronunciation feedback with phonetic guides
 - Professional language assessment
 - Fluency analysis
+- **NEW:** AI-powered detailed error analysis
+- **NEW:** LLM-generated insights and explanations
 - Downloadable reports (JSON, TXT, PDF)
 
 ## Setup & Installation
@@ -251,11 +253,15 @@ Edit `styles.css` to customize:
 
 ```
 web_ui/
-├── index.html          # Main HTML file
-├── styles.css          # All styling
-├── app.js             # Frontend JavaScript
-├── backend_api.py     # Flask backend server
-└── README.md          # This file
+├── index.html              # Main HTML file
+├── styles.css              # All styling (including enhanced error cards)
+├── app.js                  # Frontend JavaScript (with LLM report display)
+├── backend_api.py          # Flask backend server (LLM-enhanced)
+├── README.md               # This file
+├── ENHANCED_REPORTS.md     # Documentation for LLM-enhanced reports
+├── QUICK_START.md          # Quick start guide
+├── start_server.bat        # Windows startup script
+└── start_server.sh         # Linux/Mac startup script
 ```
 
 ## Dependencies
@@ -271,6 +277,33 @@ web_ui/
 - All conversational bot dependencies
 
 ## Advanced Features
+
+### LLM-Enhanced Detailed Reports
+
+The web UI now includes **AI-powered error analysis** that provides:
+
+1. **Pinpointed Grammar Errors**
+   - Exact error location in your messages
+   - Error type classification (subject-verb agreement, tense, etc.)
+   - Original vs. corrected text comparison
+   - Detailed explanations for each error
+
+2. **Spelling Corrections**
+   - Misspelled words highlighted
+   - Correct spelling provided
+   - Context showing where the error occurred
+
+3. **Pronunciation Guidance**
+   - Words that may be mispronounced
+   - Phonetic pronunciation guides
+   - Tips for correct pronunciation
+
+4. **AI-Generated Insights**
+   - Communication style observations
+   - Strengths in your conversation
+   - Specific areas for improvement
+
+See [ENHANCED_REPORTS.md](ENHANCED_REPORTS.md) for detailed documentation.
 
 ### Download Reports
 
