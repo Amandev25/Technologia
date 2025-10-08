@@ -1,0 +1,49 @@
+2025-10-08 06:07:50,607 - __main__ - INFO - Starting Essay Corrector API server
+2025-10-08 06:07:50,607 - __main__ - INFO - Log file: logs/essay_corrector_20251008.log
+2025-10-08 06:08:20,251 - __main__ - INFO - Health check endpoint accessed
+2025-10-08 06:09:22,739 - __main__ - INFO - Received essay correction request for essay of length: 542
+2025-10-08 06:09:22,740 - __main__ - INFO - JWT token length: 155
+2025-10-08 06:09:22,742 - __main__ - INFO - Starting input validation
+2025-10-08 06:09:22,748 - __main__ - INFO - Input validation passed
+2025-10-08 06:09:22,751 - __main__ - INFO - Calling essay correction function
+2025-10-08 06:09:22,754 - essay_corrector - INFO - Starting essay correction process
+2025-10-08 06:09:22,766 - essay_corrector - INFO - Essay length: 542
+2025-10-08 06:09:22,767 - essay_corrector - INFO - JWT token length: 155
+2025-10-08 06:09:22,768 - essay_corrector - INFO - Calling LLM for essay correction...
+2025-10-08 06:09:22,775 - essay_corrector - INFO - Starting LLM call with model: gemini-2.0-flash
+2025-10-08 06:09:22,788 - essay_corrector - INFO - System instruction length: 985
+2025-10-08 06:09:22,790 - essay_corrector - INFO - Content length: 542
+2025-10-08 06:09:22,850 - essay_corrector - INFO - Generating content with Gemini API
+2025-10-08 06:09:26,631 - essay_corrector - INFO - LLM call successful - Prompt tokens: 243, Completion tokens: 185
+2025-10-08 06:09:26,633 - essay_corrector - INFO - Parsing LLM response
+2025-10-08 06:09:26,633 - essay_corrector - INFO - Raw response length: 1188
+2025-10-08 06:09:26,635 - essay_corrector - INFO - Successfully parsed LLM response as JSON
+2025-10-08 06:09:26,636 - essay_corrector - INFO - Essay correction completed successfully
+2025-10-08 06:09:26,637 - essay_corrector - INFO - Corrected essay length: 549
+2025-10-08 06:09:26,637 - essay_corrector - INFO - Report length: 574
+2025-10-08 06:09:26,641 - __main__ - INFO - Essay correction completed successfully
+2025-10-08 06:09:26,642 - __main__ - INFO - Token usage: {'prompt_tokens': 243, 'completion_tokens': 185}
+2025-10-08 06:21:28,765 - __main__ - INFO - Starting Essay Corrector API server
+2025-10-08 06:21:28,765 - __main__ - INFO - Log file: logs/essay_corrector_20251008.log
+2025-10-08 06:21:52,132 - __main__ - INFO - Received essay correction request for essay of length: 542
+2025-10-08 06:21:52,133 - __main__ - INFO - JWT token length: 155
+2025-10-08 06:21:52,134 - __main__ - INFO - Starting input validation
+2025-10-08 06:21:52,135 - __main__ - INFO - Input validation passed
+2025-10-08 06:21:52,136 - __main__ - INFO - Calling essay correction function
+2025-10-08 06:21:52,138 - essay_corrector - INFO - Starting essay correction process
+2025-10-08 06:21:52,139 - essay_corrector - INFO - Essay length: 542
+2025-10-08 06:21:52,140 - essay_corrector - INFO - JWT token length: 155
+2025-10-08 06:21:52,140 - essay_corrector - INFO - Calling LLM for essay correction...
+2025-10-08 06:21:52,141 - essay_corrector - INFO - Starting LLM call with model: gemini-2.0-flash
+2025-10-08 06:21:52,144 - essay_corrector - INFO - System instruction length: 5331
+2025-10-08 06:21:52,145 - essay_corrector - INFO - Content length: 542
+2025-10-08 06:21:52,146 - essay_corrector - INFO - Generating content with Gemini API
+2025-10-08 06:22:00,764 - essay_corrector - INFO - LLM call successful - Prompt tokens: 576, Completion tokens: 486
+2025-10-08 06:22:00,768 - essay_corrector - INFO - Parsing LLM response
+2025-10-08 06:22:00,770 - essay_corrector - INFO - Raw response length: 6553
+2025-10-08 06:22:00,772 - essay_corrector - INFO - Successfully parsed LLM response as JSON
+2025-10-08 06:22:00,773 - essay_corrector - INFO - Essay correction completed successfully
+2025-10-08 06:22:00,774 - essay_corrector - INFO - Corrected essay length: 549
+2025-10-08 06:22:00,776 - essay_corrector - INFO - Report length: 3
+2025-10-08 06:22:00,780 - __main__ - INFO - Essay correction completed successfully
+2025-10-08 06:22:00,784 - __main__ - INFO - Token usage: {'prompt_tokens': 576, 'completion_tokens': 486}

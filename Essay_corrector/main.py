@@ -2,7 +2,7 @@ from fastapi import FastAPI, HTTPException, status
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
 from pydantic import BaseModel, Field
-from typing import Dict, Any, Optional
+from typing import Dict, Any, Optional, List
 import logging
 from essay_corrector import correct_essay, validate_essay_input, validate_jwt_token
 
@@ -43,6 +43,33 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+# Pydantic models for structured report
+class ErrorDetail(BaseModel):
+    word: Optional[str] = Field(None, description="The misspelled word")
+    correction: Optional[str] = Field(None, description="The corrected word")
+    error: Optional[str] = Field(None, description="Type of grammatical error")
+    original: Optional[str] = Field(None, description="Original incorrect text")
+    position: Optional[str] = Field(None, description="Position of the error")
+    explanation: str = Field(..., description="Explanation of the error")
+
+class CategoryReport(BaseModel):
+    score: int = Field(..., description="Score for this category (0-100)", ge=0, le=100)
+    errors_found: Optional[int] = Field(None, description="Number of errors found")
+    errors: Optional[List[ErrorDetail]] = Field(None, description="List of specific errors")
+    feedback: str = Field(..., description="Feedback for this category")
+    suggestions: Optional[List[str]] = Field(None, description="Suggestions for improvement")
+
+class SummaryReport(BaseModel):
+    total_errors: int = Field(..., description="Total number of errors found")
+    strengths: List[str] = Field(..., description="List of essay strengths")
+    areas_for_improvement: List[str] = Field(..., description="Areas that need improvement")
+    overall_feedback: str = Field(..., description="Overall feedback and recommendations")
+
+class StructuredReport(BaseModel):
+    overall_score: int = Field(..., description="Overall essay score (0-100)", ge=0, le=100)
+    categories: Dict[str, CategoryReport] = Field(..., description="Detailed category analysis")
+    summary: SummaryReport = Field(..., description="Summary of the analysis")
+
 # Pydantic models for request/response
 class EssayCorrectionRequest(BaseModel):
     essay: str = Field(..., description="The essay text to be corrected", min_length=10, max_length=10000)
@@ -58,7 +85,7 @@ class EssayCorrectionRequest(BaseModel):
 
 class EssayCorrectionResponse(BaseModel):
     corrected_essay: str = Field(..., description="The corrected version of the essay")
-    essay_report: str = Field(..., description="Detailed report of mistakes and corrections")
+    essay_report: Any = Field(..., description="Detailed report - can be string (legacy) or structured report")
     jwt_token: str = Field(..., description="The JWT token that was provided")
     token_usage: Optional[Dict[str, int]] = Field(None, description="Token usage statistics from LLM")
     error: Optional[bool] = Field(False, description="Indicates if an error occurred")
@@ -67,7 +94,44 @@ class EssayCorrectionResponse(BaseModel):
         json_schema_extra = {
             "example": {
                 "corrected_essay": "This is a sample essay with some spelling errors and grammatical mistakes. It needs to be corrected.",
-                "essay_report": "Found 2 spelling errors: 'speling' should be 'spelling', 'gramatical' should be 'grammatical'. Found 1 grammatical error: 'need' should be 'needs' (subject-verb agreement). Overall essay quality: Good structure but needs attention to spelling and grammar.",
+                "essay_report": {
+                    "overall_score": 75,
+                    "categories": {
+                        "spelling": {
+                            "score": 60,
+                            "errors_found": 2,
+                            "errors": [
+                                {
+                                    "word": "speling",
+                                    "correction": "spelling",
+                                    "position": "line 1",
+                                    "explanation": "Common misspelling"
+                                }
+                            ],
+                            "feedback": "Several spelling errors need attention"
+                        },
+                        "grammar": {
+                            "score": 80,
+                            "errors_found": 1,
+                            "errors": [
+                                {
+                                    "error": "subject-verb disagreement",
+                                    "original": "need",
+                                    "correction": "needs",
+                                    "position": "line 1",
+                                    "explanation": "Third person singular requires 's' ending"
+                                }
+                            ],
+                            "feedback": "Good grammar overall with one error"
+                        }
+                    },
+                    "summary": {
+                        "total_errors": 3,
+                        "strengths": ["Clear message"],
+                        "areas_for_improvement": ["Spelling accuracy"],
+                        "overall_feedback": "Good basic writing with clear communication."
+                    }
+                },
                 "jwt_token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c",
                 "token_usage": {
                     "prompt_tokens": 150,

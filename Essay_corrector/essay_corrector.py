@@ -91,28 +91,139 @@ def correct_essay(essay: str, jwt_token: str) -> Dict[str, Any]:
         # System instruction for the LLM
         system_instruction = """You are an expert English language tutor and essay corrector. 
 
-TASK: Correct the provided essay and identify all errors.
+TASK: Correct the provided essay and provide a comprehensive, structured analysis.
 
 REQUIREMENTS:
 1. Fix ALL spelling and grammatical errors
 2. Improve sentence structure and clarity
 3. Maintain the original meaning and tone
-4. Return ONLY valid JSON format
+4. Provide detailed, structured feedback
+5. Return ONLY valid JSON format
 
 RESPONSE FORMAT (return ONLY this JSON structure):
 {
     "corrected_essay": "The fully corrected version of the essay with all errors fixed",
-    "essay_report": "Detailed analysis: Found X spelling errors: [list errors]. Found Y grammatical errors: [list errors]. Overall quality: [assessment]"
+    "essay_report": {
+        "overall_score": 85,
+        "categories": {
+            "spelling": {
+                "score": 90,
+                "errors_found": 2,
+                "errors": [
+                    {
+                        "word": "recieve",
+                        "correction": "receive",
+                        "position": "line 1",
+                        "explanation": "Common misspelling - 'i' before 'e' except after 'c'"
+                    }
+                ],
+                "feedback": "Good spelling overall with minor errors"
+            },
+            "grammar": {
+                "score": 80,
+                "errors_found": 1,
+                "errors": [
+                    {
+                        "error": "subject-verb disagreement",
+                        "original": "need",
+                        "correction": "needs",
+                        "position": "line 1",
+                        "explanation": "Third person singular requires 's' ending"
+                    }
+                ],
+                "feedback": "Generally good grammar with room for improvement"
+            },
+            "structure": {
+                "score": 85,
+                "feedback": "Clear organization with good paragraph flow",
+                "suggestions": ["Consider adding transitional phrases between paragraphs"]
+            },
+            "clarity": {
+                "score": 90,
+                "feedback": "Ideas are clearly expressed and easy to follow",
+                "suggestions": []
+            },
+            "vocabulary": {
+                "score": 75,
+                "feedback": "Appropriate word choice with some opportunities for enhancement",
+                "suggestions": ["Consider using more varied vocabulary in academic writing"]
+            }
+        },
+        "summary": {
+            "total_errors": 3,
+            "strengths": ["Clear thesis statement", "Good use of examples"],
+            "areas_for_improvement": ["Spelling accuracy", "Grammar consistency"],
+            "overall_feedback": "This essay shows good understanding of the topic with clear organization. Focus on spelling and grammar for improvement."
+        }
+    }
 }
 
 EXAMPLE:
-Input: "I have a recieve problem with my seperate files"
+Input: "I have a recieve problem with my seperate files. It need to be corected."
 Output: {
-    "corrected_essay": "I have a receive problem with my separate files",
-    "essay_report": "Found 2 spelling errors: 'recieve' should be 'receive', 'seperate' should be 'separate'. No grammatical errors found. Overall quality: Good sentence structure."
+    "corrected_essay": "I have a receive problem with my separate files. It needs to be corrected.",
+    "essay_report": {
+        "overall_score": 75,
+        "categories": {
+            "spelling": {
+                "score": 60,
+                "errors_found": 2,
+                "errors": [
+                    {
+                        "word": "recieve",
+                        "correction": "receive",
+                        "position": "line 1",
+                        "explanation": "Common misspelling - 'i' before 'e' except after 'c'"
+                    },
+                    {
+                        "word": "seperate",
+                        "correction": "separate",
+                        "position": "line 1",
+                        "explanation": "Common misspelling - 'a' not 'e' in the middle"
+                    }
+                ],
+                "feedback": "Several spelling errors need attention"
+            },
+            "grammar": {
+                "score": 80,
+                "errors_found": 1,
+                "errors": [
+                    {
+                        "error": "subject-verb disagreement",
+                        "original": "need",
+                        "correction": "needs",
+                        "position": "line 2",
+                        "explanation": "Third person singular requires 's' ending"
+                    }
+                ],
+                "feedback": "Good grammar overall with one error"
+            },
+            "structure": {
+                "score": 70,
+                "feedback": "Basic sentence structure is present",
+                "suggestions": ["Consider combining sentences for better flow"]
+            },
+            "clarity": {
+                "score": 85,
+                "feedback": "Message is clear and understandable",
+                "suggestions": []
+            },
+            "vocabulary": {
+                "score": 80,
+                "feedback": "Appropriate word choice for the context",
+                "suggestions": []
+            }
+        },
+        "summary": {
+            "total_errors": 3,
+            "strengths": ["Clear message", "Appropriate vocabulary"],
+            "areas_for_improvement": ["Spelling accuracy", "Sentence variety"],
+            "overall_feedback": "Good basic writing with clear communication. Focus on spelling and sentence structure for improvement."
+        }
+    }
 }
 
-CRITICAL: Return ONLY the JSON object, no other text."""
+CRITICAL: Return ONLY the JSON object, no other text. Ensure all scores are integers between 0-100."""
         
         # Call the LLM
         logger.info("Calling LLM for essay correction...")
@@ -156,6 +267,14 @@ CRITICAL: Return ONLY the JSON object, no other text."""
                 "corrected_essay": essay,
                 "essay_report": "Error: LLM response format invalid. Missing required keys."
             }
+        
+        # Validate structured report format if it's a dict
+        if isinstance(llm_json.get("essay_report"), dict):
+            report = llm_json["essay_report"]
+            # Ensure required fields exist in structured report
+            if "overall_score" not in report or "categories" not in report or "summary" not in report:
+                logger.warning("Structured report missing required fields, converting to fallback format")
+                llm_json["essay_report"] = f"Structured analysis completed. Overall score: {report.get('overall_score', 'N/A')}. See detailed breakdown in categories."
         
         # Append JWT token to the response
         final_response = {
